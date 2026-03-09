@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roteirizador Pro</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAO46S-g-tbXDg9aljUNajplLQV_3i7c9Q&libraries=places"></script>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar fixa -->
+    <div class="sidebar">
+        <div class="logo">
+            <img src="imagens/logo empresa.png" alt="Logo">
+            <h2><i class="fas fa-route"></i> Roteirizador Pro</h2>
+        </div>
+        <nav class="nav-menu">
+            <a href="#" data-page="dashboard" class="nav-item active">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+            <a href="#" data-page="clientes" class="nav-item">
+                <i class="fas fa-building"></i> Clientes
+            </a>
+            <a href="#" data-page="vendedores" class="nav-item">
+                <i class="fas fa-user-tie"></i> Vendedores
+            </a>
+            <a href="#" data-page="rotas" class="nav-item">
+                <i class="fas fa-map-marked-alt"></i> Criar Rota
+            </a>
+        </nav>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <main class="main-content">
+        <!-- Dashboard -->
+        <div id="dashboard" class="page active">
+            <header class="page-header">
+                <h1>Dashboard</h1>
+                <div class="stats">
+                    <div class="stat-card">
+                        <i class="fas fa-building"></i>
+                        <div>
+                            <span id="totalClientes">0</span>
+                            <small>Clientes</small>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-user-tie"></i>
+                        <div>
+                            <span id="totalVendedores">0</span>
+                            <small>Vendedores</small>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-road"></i>
+                        <div>
+                            <span id="totalRotas">0</span>
+                            <small>Rotas Hoje</small>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        </div>
+
+        <!-- Clientes -->
+        <div id="clientes" class="page">
+            <header class="page-header">
+                <h1><i class="fas fa-building"></i> Clientes / Empresas</h1>
+                <button class="btn-primary" onclick="openModal('clienteModal')">
+                    <i class="fas fa-plus"></i> Novo Cliente
+                </button>
+            </header>
+            <div class="table-container">
+                <table id="tabelaClientes">
+                    <thead>
+                        <tr>
+                            <th>CNPJ</th>
+                            <th>Nome</th>
+                            <th>Endereço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Vendedores -->
+        <div id="vendedores" class="page">
+            <header class="page-header">
+                <h1><i class="fas fa-user-tie"></i> Vendedores</h1>
+                <button class="btn-primary" onclick="openModal('vendedorModal')">
+                    <i class="fas fa-plus"></i> Novo Vendedor
+                </button>
+            </header>
+            <div class="table-container">
+                <table id="tabelaVendedores">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Endereço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Criar Rota -->
+        <div id="rotas" class="page">
+            <header class="page-header">
+                <h1><i class="fas fa-map-marked-alt"></i> Criar Nova Rota</h1>
+            </header>
+            <div class="rota-container">
+                <div class="form-section">
+                    <div class="form-group">
+                        <label>Vendedor</label>
+                        <input type="text" id="vendedorRota" placeholder="Digite nome ou ID do vendedor" class="autocomplete">
+                    </div>
+                    <div class="form-group">
+                        <label>Clientes na Rota</label>
+                        <div class="multi-select">
+                            <select id="clientesRota" multiple>
+                                <option value="">Selecione clientes</option>
+                            </select>
+                            <button class="btn-success" onclick="adicionarClienteRota()">
+                                <i class="fas fa-plus"></i> Adicionar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Veículo</label>
+                        <div class="veiculo-buttons">
+                            <button class="veiculo-btn active" data-veiculo="carro">
+                                <i class="fas fa-car"></i> Carro (R$0,90/km)
+                            </button>
+                            <button class="veiculo-btn" data-veiculo="moto">
+                                <i class="fas fa-motorcycle"></i> Moto (R$0,40/km)
+                            </button>
+                        </div>
+                    </div>
+                    <button class="btn-success btn-lg" onclick="calcularRota()">
+                        <i class="fas fa-calculator"></i> Calcular Rota
+                    </button>
+                </div>
+                <div class="map-section">
+                    <div id="mapa"></div>
+                </div>
+                <div id="resultadoRota" class="resultado-section"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modais -->
+    <div id="clienteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Novo Cliente</h2>
+                <span class="close" onclick="closeModal('clienteModal')">&times;</span>
+            </div>
+            <form onsubmit="salvarCliente(event)">
+                <input type="text" id="cnpjCliente" placeholder="CNPJ" maxlength="18">
+                <input type="text" id="nomeCliente" placeholder="Nome da Empresa">
+                <input type="text" id="enderecoCliente" class="autocomplete" placeholder="Endereço">
+                <button type="submit" class="btn-primary">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="vendedorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Novo Vendedor</h2>
+                <span class="close" onclick="closeModal('vendedorModal')">&times;</span>
+            </div>
+            <form onsubmit="salvarVendedor(event)">
+                <input type="text" id="idVendedor" placeholder="ID do Vendedor">
+                <input type="text" id="nomeVendedor" placeholder="Nome">
+                <input type="text" id="enderecoVendedor" class="autocomplete" placeholder="Endereço">
+                <button type="submit" class="btn-primary">Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
