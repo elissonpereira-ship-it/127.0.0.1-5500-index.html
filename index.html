@@ -1,190 +1,137 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roteirizador Pro</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAO46S-g-tbXDg9aljUNajplLQV_3i7c9Q&libraries=places"></script>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UniRotas Meet — Gestor</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-    <!-- Sidebar fixa -->
-    <div class="sidebar">
-        <div class="logo">
-            <img src="imagens/logo empresa.png" alt="Logo">
-            <h2><i class="fas fa-route"></i> Roteirizador Pro</h2>
-        </div>
-        <nav class="nav-menu">
-            <a href="#" data-page="dashboard" class="nav-item active">
-                <i class="fas fa-home"></i> Dashboard
-            </a>
-            <a href="#" data-page="clientes" class="nav-item">
-                <i class="fas fa-building"></i> Clientes
-            </a>
-            <a href="#" data-page="vendedores" class="nav-item">
-                <i class="fas fa-user-tie"></i> Vendedores
-            </a>
-            <a href="#" data-page="rotas" class="nav-item">
-                <i class="fas fa-map-marked-alt"></i> Criar Rota
-            </a>
-        </nav>
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="logo empresa.png" alt="Logo" />
+      <div>
+        <strong>UniRotas Meet</strong>
+        <span>Gestor</span>
+      </div>
     </div>
-
-    <!-- Conteúdo principal -->
-    <main class="main-content">
-        <!-- Dashboard -->
-        <div id="dashboard" class="page active">
-            <header class="page-header">
-                <h1>Dashboard</h1>
-                <div class="stats">
-                    <div class="stat-card">
-                        <i class="fas fa-building"></i>
-                        <div>
-                            <span id="totalClientes">0</span>
-                            <small>Clientes</small>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-user-tie"></i>
-                        <div>
-                            <span id="totalVendedores">0</span>
-                            <small>Vendedores</small>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-road"></i>
-                        <div>
-                            <span id="totalRotas">0</span>
-                            <small>Rotas Hoje</small>
-                        </div>
-                    </div>
-                </div>
-            </header>
-        </div>
-
-        <!-- Clientes -->
-        <div id="clientes" class="page">
-            <header class="page-header">
-                <h1><i class="fas fa-building"></i> Clientes / Empresas</h1>
-                <button class="btn-primary" onclick="openModal('clienteModal')">
-                    <i class="fas fa-plus"></i> Novo Cliente
-                </button>
-            </header>
-            <div class="table-container">
-                <table id="tabelaClientes">
-                    <thead>
-                        <tr>
-                            <th>CNPJ</th>
-                            <th>Nome</th>
-                            <th>Endereço</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Vendedores -->
-        <div id="vendedores" class="page">
-            <header class="page-header">
-                <h1><i class="fas fa-user-tie"></i> Vendedores</h1>
-                <button class="btn-primary" onclick="openModal('vendedorModal')">
-                    <i class="fas fa-plus"></i> Novo Vendedor
-                </button>
-            </header>
-            <div class="table-container">
-                <table id="tabelaVendedores">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Endereço</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Criar Rota -->
-        <div id="rotas" class="page">
-            <header class="page-header">
-                <h1><i class="fas fa-map-marked-alt"></i> Criar Nova Rota</h1>
-            </header>
-            <div class="rota-container">
-                <div class="form-section">
-                    <div class="form-group">
-                        <label>Vendedor</label>
-                        <input type="text" id="vendedorRota" placeholder="Digite nome ou ID do vendedor" class="autocomplete">
-                    </div>
-                    <div class="form-group">
-                        <label>Clientes na Rota</label>
-                        <div class="multi-select">
-                            <select id="clientesRota" multiple>
-                                <option value="">Selecione clientes</option>
-                            </select>
-                            <button class="btn-success" onclick="adicionarClienteRota()">
-                                <i class="fas fa-plus"></i> Adicionar
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Veículo</label>
-                        <div class="veiculo-buttons">
-                            <button class="veiculo-btn active" data-veiculo="carro">
-                                <i class="fas fa-car"></i> Carro (R$0,90/km)
-                            </button>
-                            <button class="veiculo-btn" data-veiculo="moto">
-                                <i class="fas fa-motorcycle"></i> Moto (R$0,40/km)
-                            </button>
-                        </div>
-                    </div>
-                    <button class="btn-success btn-lg" onclick="calcularRota()">
-                        <i class="fas fa-calculator"></i> Calcular Rota
-                    </button>
-                </div>
-                <div class="map-section">
-                    <div id="mapa"></div>
-                </div>
-                <div id="resultadoRota" class="resultado-section"></div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Modais -->
-    <div id="clienteModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Novo Cliente</h2>
-                <span class="close" onclick="closeModal('clienteModal')">&times;</span>
-            </div>
-            <form onsubmit="salvarCliente(event)">
-                <input type="text" id="cnpjCliente" placeholder="CNPJ" maxlength="18">
-                <input type="text" id="nomeCliente" placeholder="Nome da Empresa">
-                <input type="text" id="enderecoCliente" class="autocomplete" placeholder="Endereço">
-                <button type="submit" class="btn-primary">Salvar</button>
-            </form>
-        </div>
+    <nav class="nav">
+      <button class="nav-item active" data-page="dashboard"><i data-lucide="layout-dashboard"></i><span>Dashboard</span></button>
+      <button class="nav-item" data-page="reunioes"><i data-lucide="users"></i><span>Reuniões</span></button>
+      <button class="nav-item" data-page="locais"><i data-lucide="map-pin"></i><span>Locais</span></button>
+      <button class="nav-item" data-page="vendedores"><i data-lucide="user"></i><span>Vendedores</span></button>
+      <button class="nav-item" data-page="auditoria"><i data-lucide="shield-alert"></i><span>Auditoria GPS</span></button>
+    </nav>
+    <div class="sidebar-footer">
+      <a class="ghost-btn" href="vendedor.html">Abrir App do Vendedor</a>
+      <small>Versão: Meet v1</small>
     </div>
+  </aside>
 
-    <div id="vendedorModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Novo Vendedor</h2>
-                <span class="close" onclick="closeModal('vendedorModal')">&times;</span>
-            </div>
-            <form onsubmit="salvarVendedor(event)">
-                <input type="text" id="idVendedor" placeholder="ID do Vendedor">
-                <input type="text" id="nomeVendedor" placeholder="Nome">
-                <input type="text" id="enderecoVendedor" class="autocomplete" placeholder="Endereço">
-                <button type="submit" class="btn-primary">Salvar</button>
-            </form>
+  <main class="content">
+    <header class="topbar">
+      <div>
+        <h1 id="page-title">Dashboard</h1>
+        <p id="page-subtitle">Resumo das reuniões e custos do dia.</p>
+      </div>
+      <div class="topbar-actions">
+        <input type="date" id="filter-date" />
+        <select id="filter-region">
+          <option value="all">Todas as regiões</option>
+          <option value="ES">Espírito Santo (ES)</option>
+          <option value="RJ">Rio de Janeiro (RJ)</option>
+        </select>
+        <button class="primary-btn" id="btn-refresh"><i data-lucide="refresh-cw"></i>Atualizar</button>
+      </div>
+    </header>
+
+    <section id="dashboard" class="page active">
+      <div class="cards">
+        <div class="card">
+          <span>Motoristas</span>
+          <strong id="dash-drivers">0</strong>
         </div>
-    </div>
+        <div class="card">
+          <span>Caronas</span>
+          <strong id="dash-passengers">0</strong>
+        </div>
+        <div class="card">
+          <span>KM Totais</span>
+          <strong id="dash-km">0.0</strong>
+        </div>
+        <div class="card highlight">
+          <span>Total a Pagar (R$)</span>
+          <strong id="dash-pay">0,00</strong>
+        </div>
+      </div>
 
-    <script src="script.js"></script>
+      <div class="panel">
+        <div class="panel-header">
+          <h2><i data-lucide="route"></i>Motoristas & Rotas</h2>
+          <button class="ghost-btn" id="btn-export">Exportar CSV</button>
+        </div>
+        <div id="driver-report" class="table"></div>
+      </div>
+    </section>
+
+    <section id="reunioes" class="page">
+      <div class="panel">
+        <div class="panel-header">
+          <h2><i data-lucide="users"></i>Status em Tempo Real</h2>
+          <div class="inline-filters">
+            <select id="filter-location"></select>
+          </div>
+        </div>
+        <div id="live-participants" class="table"></div>
+      </div>
+    </section>
+
+    <section id="locais" class="page">
+      <div class="panel">
+        <div class="panel-header">
+          <h2><i data-lucide="map-pin"></i>Locais de Reunião</h2>
+        </div>
+        <form id="location-form" class="form-grid">
+          <input type="text" id="loc-name" placeholder="Nome do local" required />
+          <input type="text" id="loc-address" placeholder="Endereço" required />
+          <input type="number" step="any" id="loc-lat" placeholder="Lat" required />
+          <input type="number" step="any" id="loc-lng" placeholder="Lng" required />
+          <select id="loc-region" required>
+            <option value="ES">Espírito Santo (ES)</option>
+            <option value="RJ">Rio de Janeiro (RJ)</option>
+          </select>
+          <button class="primary-btn" type="submit"><i data-lucide="save"></i>Salvar</button>
+        </form>
+        <div id="location-list" class="table"></div>
+      </div>
+    </section>
+
+    <section id="vendedores" class="page">
+      <div class="panel">
+        <div class="panel-header">
+          <h2><i data-lucide="user"></i>Cadastros</h2>
+        </div>
+        <div id="seller-list" class="table"></div>
+      </div>
+    </section>
+
+    <section id="auditoria" class="page">
+      <div class="panel">
+        <div class="panel-header">
+          <h2><i data-lucide="shield-alert"></i>Alertas de Fraude</h2>
+        </div>
+        <div id="fraud-list" class="table"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <script src="script.js"></script>
+  <script>lucide.createIcons();</script>
 </body>
 </html>
